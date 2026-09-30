@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Internal Quote Tool — Junk &amp; Move Pros</title>
+<link rel="icon" href="images/logo.png">
+<style>
+  :root{
+    --orange:#FFA800; --blue:#0BB3F2; --navy:#101c2c; --navy2:#1a2a40;
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1c2733; --muted:#6b7a8d; --line:#e2e8f0;
+    --green:#16a34a; --red:#dc2626;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink);}
+  header{background:var(--navy); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:10;}
+  header img{height:38px; width:auto;}
+  header .t{line-height:1.25;}
+  header .t b{font-size:16px; display:block;}
+  header .t span{font-size:11px; color:var(--orange); letter-spacing:1.5px; text-transform:uppercase; font-weight:700;}
+  .wrap{max-width:640px; margin:0 auto; padding:16px 14px 60px;}
+  .tabs{display:flex; background:#dde4ec; border-radius:12px; padding:4px; margin:6px 0 16px;}
+  .tabs button{flex:1; border:0; background:transparent; padding:12px; font-size:15px; font-weight:700; border-radius:9px; color:var(--muted); cursor:pointer;}
+  .tabs button.on{background:var(--navy); color:#fff;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 1px 3px rgba(16,28,44,.06);}
+  .card h3{margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--muted);}
+  label{display:block; font-size:13px; font-weight:600; margin:12px 0 6px; color:var(--ink);}
+  label small{font-weight:400; color:var(--muted);}
+  input[type=number], input[type=text]{width:100%; padding:12px; font-size:16px; border:1.5px solid var(--line); border-radius:10px; background:#fbfcfe;}
+  input:focus{outline:none; border-color:var(--blue);}
+  .sizes{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+  .sizes button{border:1.5px solid var(--line); background:#fbfcfe; border-radius:10px; padding:10px 4px; font-size:13px; font-weight:700; cursor:pointer; color:var(--ink);}
+  .sizes button.on{border-color:var(--orange); background:#fff7e6; color:#8a5a00;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .gasline{font-size:13px; color:var(--muted); margin-top:8px;}
+  .gasline b{color:var(--ink);}
+  .tiers{display:grid; gap:10px;}
+  .tier{border:2px solid var(--line); border-radius:12px; padding:14px; position:relative; background:#fff;}
+  .tier.rec{border-color:var(--green); background:#f0fdf4;}
+  .tier .badge{position:absolute; top:-11px; right:12px; background:var(--green); color:#fff; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; letter-spacing:.5px;}
+  .tier .mk{font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted);}
+  .tier.rec .mk{color:var(--green);}
+  .tier .price{font-size:32px; font-weight:800; margin:4px 0;}
+  .tier .meta{font-size:13px; color:var(--muted); line-height:1.6;}
+  .tier .meta b{color:var(--ink);}
+  .vs{font-size:13px; color:var(--muted);}
+  .vs b{color:var(--ink);}
+  .under{color:var(--green); font-weight:700;}
+  .over{color:var(--red); font-weight:700;}
+  .note{font-size:12px; color:var(--muted); text-align:center; margin-top:18px; line-height:1.6;}
+  .hisrate{background:#e8f7fe; border:1px dashed var(--blue); border-radius:10px; padding:10px 12px; font-size:13px; margin-top:10px;}
+  .hisrate b{color:#0369a1;}
+  /* PIN overlay */
+  #pinOverlay{position:fixed; inset:0; background:var(--navy); z-index:99; display:flex; align-items:center; justify-content:center; padding:20px;}
+  #pinBox{background:#fff; border-radius:16px; padding:28px 24px; width:100%; max-width:320px; text-align:center;}
+  #pinBox img{height:44px; margin-bottom:10px;}
+  #pinBox h2{margin:0 0 6px; font-size:18px;}
+  #pinBox p{font-size:13px; color:var(--muted); margin:0 0 14px;}
+  #pinBox input{text-align:center; font-size:24px; letter-spacing:8px; font-weight:800;}
+  #pinBox button{margin-top:14px; width:100%; background:var(--orange); border:0; color:#1c2733; font-weight:800; font-size:16px; padding:13px; border-radius:10px; cursor:pointer;}
+  #pinErr{color:var(--red); font-size:13px; min-height:18px; margin-top:8px;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="pinOverlay">
+  <div id="pinBox">
+    <img src="images/logo.png" alt="Junk &amp; Move Pros">
+    <h2>Internal Tool</h2>
+    <p>Enter the 4-digit PIN to open the quote calculator.</p>
+    <input type="text" id="pinInput" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+    <div id="pinErr"></div>
+    <button onclick="checkPin()">Unlock</button>
+  </div>
+</div>
+
+<header>
+  <img src="images/logo.png" alt="Junk &amp; Move Pros">
+  <div class="t"><b>Quote Calculator</b><span>Internal · Do Not Share</span></div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button id="tabJunk" class="on" onclick="setTab('junk')">Junk Removal</button>
+    <button id="tabMove" onclick="setTab('move')">Moving</button>
+  </div>
+
+  <!-- JUNK PANEL -->
+  <div id="panelJunk">
+    <div class="card">
+      <h3>Load size</h3>
+      <div class="sizes" id="sizeBtns">
+        <button data-size="min" class="on" onclick="setSize('min')">Minimum</button>
+        <button data-size="qtr" onclick="setSize('qtr')">Quarter</button>
+        <button data-size="half" onclick="setSize('half')">Half</button>
+        <button data-size="full" onclick="setSize('full')">Full</button>
+      </div>
+      <label>Competitor benchmark <small>— auto-filled from research, editable</small></label>
+      <input type="number" id="junkComp" value="125" min="0" oninput="calc()">
+      <div class="gasline" id="junkCompSrc">Benchmark: College Hunks $99 · Junkluggers $159 · Blue Collar $100–150</div>
+    </div>
+    <div class="card">
+      <h3>Your cost</h3>
+      <div class="row2">
+        <div>
+          <label>Base cost <small>(labor, disposal)</small></label>
+          <input type="number" id="junkBase" value="0" min="0" oninput="calc()">
+        </div>
+        <div>
+          <label>Roundtrip miles</label>
+          <input type="number" id="junkMiles" value="0" min="0" oninput="calc()">
+        </div>
+      </div>
+      <div class="gasline">Gas @ <b>$4/mile</b> = <b id="junkGasOut">$0</b> &nbsp;·&nbsp; Total cost = <b id="junkCostOut">$0</b></div>
+    </div>
+  </div>
+
+  <!-- MOVE PANEL -->
+  <div id="panelMove" class="hidden">
+    <div class="card">
+      <h3>Job details</h3>
+      <div class="row2">
+        <div>
+          <label>Estimated hours</label>
+          <input type="number" id="moveHours" value="3" min="0.5" step="0.5" oninput="calc()">
+        </div>
+        <div>
+          <label>Competitor $/hr <small>(Hercules)</small></label>
+          <input type="number" id="moveCompRate" value="200" min="0" oninput="calc()">
+        </div>
+      </div>
+      <div class="hisrate">Your target rate: <b id="moveOurRate">$160/hr</b> — 20% under the competitor rate.</div>
+      <div class="gasline" style="margin-top:10px;">Competitor job total ≈ <b id="moveCompTotal">$600</b></div>
+    </div>
+    <div class="card">
+      <h3>Your cost</h3>
+      <div class="row2">
+        <div>
+          <label>Base cost <small>(crew, truck)</small></label>
+          <input type="number" id="moveBase" value="0" min="0" oninput="calc()">
+        </div>
+        <div>
+          <label>Roundtrip miles</label>
+          <input type="number" id="moveMiles" value="0" min="0" oninput="calc()">
+        </div>
+      </div>
+      <div class="gasline">Gas @ <b>$4/mile</b> = <b id="moveGasOut">$0</b> &nbsp;·&nbsp; Total cost = <b id="moveCostOut">$0</b></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Your 3 quote tiers <span class="vs">vs <b id="benchLabel">$125</b> competitor</span></h3>
+    <div class="tiers" id="tiers"></div>
+  </div>
+
+  <div class="note">Internal tool — never show this screen to customers.<br>Benchmarks from Sep 30, 2026 Hudson Valley competitor research.<br>Gas fixed at $4/mile per Anthony.</div>
+</div>
+
+<script>
+var PIN = "4020";
+var tab = "junk";
+var size = "min";
+var BENCH = {
+  min:  {v:125, src:"Benchmark: College Hunks $99 · Junkluggers $159 · Blue Collar $100–150"},
+  qtr:  {v:200, src:"Benchmark: Blue Collar $150–250 (quarter truck)"},
+  half: {v:480, src:"Benchmark: College Hunks $459 · Junkluggers $509 · Blue Collar $250–400"},
+  full: {v:745, src:"Benchmark: College Hunks $729 · Junkluggers $759 · Blue Collar $400–600+"}
+};
+var GAS = 4;
+
+function checkPin(){
+  var v = document.getElementById("pinInput").value.trim();
+  if(v === PIN){ localStorage.setItem("jmp_pin_ok","1"); document.getElementById("pinOverlay").style.display="none"; }
+  else { document.getElementById("pinErr").textContent = "Wrong PIN — try again."; }
+}
+document.getElementById("pinInput").addEventListener("keydown", function(e){ if(e.key==="Enter") checkPin(); });
+if(localStorage.getItem("jmp_pin_ok")==="1"){ document.getElementById("pinOverlay").style.display="none"; }
+
+function setTab(t){
+  tab = t;
+  document.getElementById("tabJunk").className = t==="junk" ? "on" : "";
+  document.getElementById("tabMove").className = t==="move" ? "on" : "";
+  document.getElementById("panelJunk").className = t==="junk" ? "" : "hidden";
+  document.getElementById("panelMove").className = t==="move" ? "" : "hidden";
+  calc();
+}
+function setSize(s){
+  size = s;
+  var btns = document.getElementById("sizeBtns").children;
+  for(var i=0;i<btns.length;i++){ btns[i].className = btns[i].dataset.size===s ? "on" : ""; }
+  document.getElementById("junkComp").value = BENCH[s].v;
+  document.getElementById("junkCompSrc").textContent = BENCH[s].src;
+  calc();
+}
+function num(id){ var v = parseFloat(document.getElementById(id).value); return isNaN(v)?0:v; }
+function money(n){ return "$" + Math.round(n).toLocaleString(); }
+
+function calc(){
+  var cost, bench;
+  if(tab==="junk"){
+    var gas = num("junkMiles")*GAS;
+    cost = num("junkBase")+gas;
+    bench = num("junkComp");
+    document.getElementById("junkGasOut").textContent = money(gas);
+    document.getElementById("junkCostOut").textContent = money(cost);
+  } else {
+    var gas = num("moveMiles")*GAS;
+    cost = num("moveBase")+gas;
+    var compRate = num("moveCompRate");
+    bench = num("moveHours")*compRate;
+    document.getElementById("moveGasOut").textContent = money(gas);
+    document.getElementById("moveCostOut").textContent = money(cost);
+    document.getElementById("moveOurRate").textContent = money(compRate*0.8)+"/hr";
+    document.getElementById("moveCompTotal").textContent = money(bench);
+  }
+  document.getElementById("benchLabel").textContent = money(bench);
+
+  var tiers = [
+    {mk:50, mult:1.50},
+    {mk:30, mult:1.30},
+    {mk:15, mult:1.15}
+  ];
+  // recommended = highest tier still under benchmark (else lowest tier)
+  var recIdx = -1;
+  for(var i=0;i<tiers.length;i++){ if(cost*tiers[i].mult < bench){ recIdx = i; break; } }
+  if(recIdx===-1) recIdx = tiers.length-1;
+
+  var html = "";
+  tiers.forEach(function(t,i){
+    var price = cost*t.mult;
+    var profit = price-cost;
+    var diff = bench-price;
+    var diffTxt = diff>=0
+      ? '<span class="under">'+money(diff)+' under competitor ('+Math.round(diff/bench*100)+'%)</span>'
+      : '<span class="over">'+money(-diff)+' OVER competitor</span>';
+    html += '<div class="tier'+(i===recIdx?' rec':'')+'">'
+      + (i===recIdx?'<div class="badge">RECOMMENDED</div>':'')
+      + '<div class="mk">'+t.mk+'% markup</div>'
+      + '<div class="price">'+money(price)+'</div>'
+      + '<div class="meta">Your profit: <b>'+money(profit)+'</b><br>'+diffTxt+'</div>'
+      + '</div>';
+  });
+  document.getElementById("tiers").innerHTML = html;
+}
+calc();
+</script>
+</body>
+</html>
